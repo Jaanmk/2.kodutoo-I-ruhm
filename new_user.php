@@ -1,14 +1,13 @@
 <?php
-	var_dump($_SESSION);
 	$page_title = "User edit";
 	$page_file_name = "userpage.php";
 	require_once(__DIR__."/functions.php");
-	require_once(__DIR__."/user.class.php");
-	if(is_null($_SESSION['logged_in_user_id'])){
+	require_once(__DIR__."/user_manage_class.php");
+	if(is_null($_SESSION['logged_in_uid'])){
 		session_destroy();
-		header("Location: /index.php");
+		header("Location:index.php");
 	}
-	$userEdit = new userEdit($connection);
+	$user_manage = new user_manage($connection);
 
 	$userfirstname_error = "";
 	$userlastname_error = "";
@@ -33,15 +32,17 @@
 		}
 
 		if ($userfirstname_error == "" and $userlastname_error == "" and $useraddress_error==""){
-			$response = $userEdit->editUser($userfirstname, $userlastname, $useraddress);
+			$response = $user_manage->editUser($userfirstname, $userlastname, $useraddress, $_SESSION['logged_in_user_id']);
 
 		}
 	}
 	?>
 	<html>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-3">
+	<head>
+	<link rel="stylesheet" type="text/css" href="page.css" />
+	</head>
+	
+	
 				<h2>Kasutaja muutmine</h2><br><br>
 				<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 						<?php if(isset($response->success)):	 ?>
@@ -55,15 +56,15 @@
 						<?php	endif; ?>
 
 					<label>Eesnimi</label>
-					<input class="form-control" name="userfirstname" type="text" placeholder="Eesnimi"  ><?php echo $userfirstname_error;?><br>
+					<input  name="userfirstname" type="text" placeholder="Eesnimi"  ><?php echo $userfirstname_error;?><br>
 					<label>Perekonnanimi</label>
-					<input class="form-control" name="userlastname" type="text" placeholder="Perekonnanimi" > <?php echo $userlastname_error;?> <br>
+					<input  name="userlastname" type="text" placeholder="Perekonnanimi" > <?php echo $userlastname_error;?> <br>
 					<label>Address</label>
-					<input class="form-control" name="useraddress" type="text" placeholder="Address"><?php echo $useraddress_error;?> <br>
+					<input  name="useraddress" type="text" placeholder="Address"><?php echo $useraddress_error;?> <br>
 					<button type="submit" class="btn btn-info btn-block">Sisesta</button>
 					<br><br>
 				</form>
+			<div>
+				<p><? echo "sinu sisselogitud kasutaja id on ", $_SESSION['logged_in_uid']; ?></p>
 			</div>
-		</div>
-	</div>
 	</html>
